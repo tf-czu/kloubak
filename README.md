@@ -1,4 +1,7 @@
 # kloubak
 Autonomous Articulated Agricultural Robot Kloubak
 
-hi world!
+Autors:
+Jan Kadeřábek
+Tomáš Pícha
+Martin Sichra
