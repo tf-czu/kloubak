@@ -51,7 +51,7 @@
     <app_adc_conf.ramp_time_pos>0.3</app_adc_conf.ramp_time_pos>
     <app_uart_baudrate>115200</app_uart_baudrate>
     <app_adc_conf.cc_button_inverted>0</app_adc_conf.cc_button_inverted>
-    <controller_id>2</controller_id>
+    <controller_id>3</controller_id>
     <app_ppm_conf.ramp_time_pos>0.3</app_ppm_conf.ramp_time_pos>
     <app_nrf_conf.address_0>198</app_nrf_conf.address_0>
     <app_adc_conf.ctrl_type>0</app_adc_conf.ctrl_type>

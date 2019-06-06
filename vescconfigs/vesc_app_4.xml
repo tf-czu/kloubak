@@ -57,7 +57,7 @@
     <app_ppm_conf.tc>0</app_ppm_conf.tc>
     <app_chuk_conf.multi_esc>0</app_chuk_conf.multi_esc>
     <app_adc_conf.voltage2_start>0.9</app_adc_conf.voltage2_start>
-    <controller_id>1</controller_id>
+    <controller_id>4</controller_id>
     <timeout_brake_current>3</timeout_brake_current>
     <app_ppm_conf.throttle_exp>0</app_ppm_conf.throttle_exp>
     <app_nrf_conf.crc_type>1</app_nrf_conf.crc_type>
