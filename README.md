@@ -18,6 +18,6 @@ Martin Dlouhý
 Autors:
 Jakub Lev, Jan Kadeřábek, Martin Sichra, Tomáš Pícha, Martin Dlouhý
 
-![CULS Prague](https://www.czu.cz/cache/article-data/czu/logo.png)
+![CULS Prague](https://www.czu.cz/cache/article-data/czu/logo.png  =350x250)
 
 2019
