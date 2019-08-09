@@ -1,11 +1,8 @@
-
-
 #include <mcp_can.h>
 #include <DueTimer.h>
 
 const int ledPin =  A0;
 const int Syrena = 8;
-
 
 MCP_CAN CAN(2);
 
@@ -17,22 +14,22 @@ byte buf[8];
 
 int CANvescID[4] = {1,2,3,4};  // ID jednotlivých motorů
 
-int CANAdressReceiveTable[4][2]={{2305,145}, //{přijatá hodntoa,přeposílaná hodntota} -- to co se má jen přeposílat APU
+int CANAdressReceiveTable[4][2] = {{2305,145}, //{přijatá hodntoa,přeposílaná hodntota} -- to co se má jen přeposílat APU
                                  {2306,146},
                                  {2307,147},
                                  {2308,148}}; 
-int CANAdressSendTable[12][2]={{17,257},//{přijatá hodntoa,přeposílaná hodntota} -- to co se má posílat vESCum
-                              {18,258},
-                              {19,259},
-                              {20,260},
-                              {33,513}, 
-                              {34,514},
-                              {35,515},
-                              {36,516},
-                              {49,769},
-                              {50,770},
-                              {51,771},
-                              {52,772}};
+int CANAdressSendTable[12][2] = {{17,257},//{přijatá hodntoa,přeposílaná hodntota} -- to co se má posílat vESCum
+                                {18,258},
+                                {19,259},
+                                {20,260},
+                                {33,513}, 
+                                {34,514},
+                                {35,515},
+                                {36,516},
+                                {49,769},
+                                {50,770},
+                                {51,771},
+                                {52,772}};
 
 const int ReceiveArraySize = 4;
 const int SendArraySize = 12; 
@@ -45,9 +42,8 @@ struct CANMessageBuffer
 struct CANMessageBuffer CANAdressReceiveBuffer[ReceiveArraySize];
 struct CANMessageBuffer CANAdressSendBuffer[SendArraySize];
 
-
-byte currentOFF[4]={0,0,0,0}; // tohle chce reverzovat, ma to znamenat 0mA
-byte currentREVERS[4]={0,0,250,0}; // brzdící proud  
+byte currentOFF[4] = {0,0,0,0}; // tohle chce reverzovat, ma to znamenat 0mA
+byte currentREVERS[4] = {0,0,250,0}; // brzdící proud  
 
 bool STOpSTARt = true; //pokud je nastaven na true je stop
 byte StopButton = 24;
@@ -57,11 +53,11 @@ bool Timmer4End = false;
 
 bool Timer3Over = false; //indikace přetečení timeru3
 
-void setup() {
-  ClearMessageBuffer();
-  
+void setup() 
+{
+  ClearMessageBuffer();  
   Serial.begin(250000);
-
+  
   pinMode(ledPin, OUTPUT);
   pinMode(Syrena,OUTPUT); //syrena
   
@@ -78,37 +74,35 @@ void setup() {
     delay(1000);
   }
   Serial.print("\nCAN init ok!!\r\n");
-
-  LEDIndicator ();
-
-  Timer3.attachInterrupt(TimerInterrupt);
-
-  Timer4.attachInterrupt(BeepDown);
-
-  BeepUP ();
   
-  while(Timmer4End != true){
+  LEDIndicator ();
+  
+  Timer3.attachInterrupt(TimerInterrupt);
+  Timer4.attachInterrupt(BeepDown);
+  BeepUP ();
+  while(Timmer4End != true)
+  {
     delay(100);
   }
-
   Timer3.start(5); // Calls every 5 ms
 }
 
-
-void loop() {
+void loop() 
+{
   ButtonRead();
-  if (Timer3Over == true){
+  if (Timer3Over == true)
+  {
     //Serial.println(STOpSTARt);
     CountCycle();
     SendButtonStatusAPU();
     CAN_MESSAGE_SenD();
     Timer3Over = false;
   }
-  if(CAN_MSGAVAIL == CAN.checkReceive()) {  
+  if(CAN_MSGAVAIL == CAN.checkReceive()) 
+  {  
     CAN.readMsgBuf(&len, buf);
     CANmessageID = CAN.getCanId();
     //CANmsgToSerial();
     CAN_MESSAGE_ReceiveD();
   }
 }
-

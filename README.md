@@ -13,10 +13,11 @@ Martin Sichra
 Jakub Lev
 Martin Dlouhý
 
-
-![CULS Prague](https://www.czu.cz/cache/article-data/czu/logo.png)
+![K](https://robotika.cz/competitions/subtchallenge/tunnel-circuit/jointer-body3.png)
 
 Autors:
-Jan Kadeřábek, Tomáš Pícha, Martin Sichra, Jakub Lev, Martin Dlouhý
+Jakub Lev, Jan Kadeřábek, Martin Sichra, Tomáš Pícha, Martin Dlouhý
+
+![CULS Prague](https://www.czu.cz/cache/article-data/czu/logo.png)
 
 2019

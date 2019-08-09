@@ -26,6 +26,8 @@ void LEDIndicator () {
       digitalWrite(ledPin, LOW);
       delay(200);
   }
+  digitalWrite(stop_led, LOW);
+  digitalWrite(ledPin, HIGH);
 }
 
 /*------------------------- Clear Buffer ------------------------------------------------------------------------*/
@@ -43,7 +45,7 @@ void BeepDown () {
   
   Timer4.stop();
   digitalWrite(Syrena, LOW);
-  digitalWrite(ledPin, LOW);
+  digitalWrite(ledPin, HIGH);
   Timmer4End = true;
 }
 
@@ -52,7 +54,7 @@ void BeepDown () {
 void BeepUP () {
   
   digitalWrite(Syrena, HIGH);
-  digitalWrite(ledPin, HIGH);
+  digitalWrite(ledPin, LOW);
   Timer4.start(300000);
 }
 
@@ -62,8 +64,23 @@ void ButtonRead(){
   digitRead = digitalRead(StopButton);
   if (digitRead==true){
     STOpSTARt = true;
+    digitalWrite(stop_led, HIGH);
   } else {
     STOpSTARt = false;
+    digitalWrite(stop_led, LOW);
+  }
+}
+
+/*---------------------------brake Button--------------------------------------------------------------------------------------*/
+
+void brake_button_read(){
+  digit_read_brake = digitalRead(control_break);
+  if (digit_read_brake==true){
+   brake_control = false;
+   digitalWrite(break_led, HIGH);
+  } else {
+    brake_control = true;
+    digitalWrite(break_led, LOW);
   }
 }
 
@@ -82,80 +99,42 @@ void SendButtonStatusAPU() {
 
 /*--------------------------- Přijatá zpráva CAN----------------------------------------------------------------------------------*/
 
-void CAN_MESSAGE_ReceiveD(){  
+void CAN_MESSAGE_ReceiveD(){
+  int can_adress;
   if (CANmessageID > 2304){
-    for (int i=0;i<ReceiveArraySize;i++){
-      if (CANmessageID == CANAdressReceiveTable[i][0]){
-        CANAdressReceiveBuffer[i].resendAdress = CANAdressReceiveTable[i][1];
-        for (int j=0;j<8;j++){
-           CANAdressReceiveBuffer[i].resendBuf[j] = buf[j];
-        } 
-        CANAdressReceiveBuffer[i].CountMessge = CANAdressReceiveBuffer[i].CountMessge + 1;
-      }
-    }
+    can_adress = (CANmessageID - 2304)+144;
+    CAN.sendMsgBuf(0x0+can_adress, 0, 8, buf);
   }else {
     if (STOpSTARt == false){
-      for (int i=0;i<SendArraySize;i++){
-        if (CANmessageID == CANAdressSendTable[i][0]){
-          CANAdressSendBuffer[i].resendAdress = CANAdressSendTable[i][1];
-          for (int j=0;j<8;j++){
-           CANAdressSendBuffer[i].resendBuf[j] = buf[j];
-          }
-          CANAdressSendBuffer[i].CountMessge = CANAdressSendBuffer[i].CountMessge + 1;
-        }
-      }
+      if (CANmessageID < 60){
+          if (CANmessageID > 48){
+            can_adress = (CANmessageID - 48)+768;
+            CAN.sendMsgBuf(0x00000+can_adress, 1, 4, buf);
+          } else if (CANmessageID > 32) {
+              can_adress = (CANmessageID - 32)+512;
+              CAN.sendMsgBuf(0x00000+can_adress, 1, 4, buf);
+            } else if (CANmessageID > 16) {
+                  can_adress = (CANmessageID - 16)+256;
+                  CAN.sendMsgBuf(0x00000+can_adress, 1, 4, buf);
+              }
+      }    
     }
   }
   ClearBuffer();
 }
+/*--------------------------- Stop Motors------------------------------------------------------------------------------------------------------*/
 
-/*--------------------------- Odesílání zpráv CAN----------------------------------------------------------------------------------*/
-
-void CAN_MESSAGE_SenD(){
- 
-  for (int i=0;i<ReceiveArraySize;i++){
-    if (CANAdressReceiveBuffer[i].CountMessge > 0){
-      CAN.sendMsgBuf(0x0+CANAdressReceiveBuffer[i].resendAdress, 0, 8, CANAdressReceiveBuffer[i].resendBuf);
-      //Serial.print(CANAdressReceiveBuffer[i].CountMessge);
+void STOP(){
+  for (int i=0;i<4;i++){
+    if (brake_control==true){
+     CAN.sendMsgBuf(0x00000200+CANvescID[i], 1, 4, currentREVERS); // motorum se pošle brzdí proud
+     CAN.sendMsgBuf(0x0020+CANvescID[i], 0, 4, currentREVERS);
+    } else {
+     CAN.sendMsgBuf(0x00000100+CANvescID[i], 1, 4, current_no_brake); // vescy nebrzdí
+     CAN.sendMsgBuf(0x0010+CANvescID[i], 0, 4, current_no_brake);
     }
-  }
-  //Serial.println("---");
-  if (STOpSTARt == false){
-    for (int i=0;i<SendArraySize;i++){
-      if (CANAdressSendBuffer[i]. CountMessge > 0){
-        CAN.sendMsgBuf(0x00000+CANAdressSendBuffer[i].resendAdress, 1, 4, CANAdressSendBuffer[i].resendBuf);
-        //Serial.print(CANAdressSendBuffer[i].CountMessge);
-      }
-    }
-    //Serial.println("---");
-  } else {
-    for (int i=0;i<4;i++){
-       CAN.sendMsgBuf(0x00000200+CANvescID[i], 1, 4, currentREVERS); // motorum se pošle brzdí proud
-       CAN.sendMsgBuf(0x0020+CANvescID[i], 0, 4, currentREVERS);
-     }
-  }
-  ClearMessageBuffer();
+   }
 }
-
-/*---------------------------- Clear Bridge Buffers -----------------------------------------------------------------------------------------*/
-
-void ClearMessageBuffer(){
-  for (int i=0;i<ReceiveArraySize;i++){
-    CANAdressReceiveBuffer[i].resendAdress = 0;
-    for (int j=0;j<8;j++){
-      CANAdressReceiveBuffer[i].resendBuf[j] = 0;
-    } 
-    CANAdressReceiveBuffer[i].CountMessge = 0; 
-  }
-  for (int i=0;i<SendArraySize;i++){
-      CANAdressSendBuffer[i].resendAdress = 0;
-      for (int j=0;j<8;j++){
-        CANAdressSendBuffer[i].resendBuf[j] = 0;
-      }
-      CANAdressSendBuffer[i].CountMessge = 0;
-    }
-  }
-
 /*---------------------------- Cycle count --------------------------------------------------------------------------------------------------*/
 
 void CountCycle(){
@@ -167,6 +146,7 @@ void CountCycle(){
     CycleCount = 0;
   } else {
      CycleCount = CycleCount+1;
-    }  
+    }
+  
 }
 
