@@ -16,12 +16,13 @@ end_point = [49.8474443,14.1672005,fixed_height]
 
 def print_map(roads,end_point,road_part_interpolated,junctions):
     fig, ax = plt.subplots(figsize=[10, 10], dpi=100, facecolor='w', edgecolor='r')
-    for r in roads:
-        x = r.north
-        y = r.east
-        ax.plot(x,y,'og',markersize=5)
     ax.plot(0,0,'+k',markersize=20)
     ax.plot(end_point.north,end_point.east,'+r',markersize=20)
+    # for r in roads:
+    #     x = r.north
+    #     y = r.east
+    #     ax.plot(x,y,'og',markersize=5)
+    ax.plot(round_bounds.east,round_bounds.north,'og',markersize=5)
     ax.plot(road_part_interpolated.north,road_part_interpolated.east,'o',markersize=0.5)
     ax.plot(junctions.north,junctions.east,'oy',markersize=2)
     ax.set_xlabel('distance to East [m]',size=12)
@@ -99,7 +100,7 @@ def get_new_roads(roads_interpolated):
         dist = len(roads_grouped[road_i][1])
         roads_info_list.append([start_north,start_east,start_cluster,road_i,dist])
         roads_info_list.append([end_north,end_east,end_cluster,road_i,dist])
-    round_bounds = pd.DataFrame(roads_info_list,columns=['north','east','cluster','road','dist'])
+    round_bounds = pd.DataFrame(roads_info_list,columns=['east','north','cluster','road','dist'])
     return roads_grouped,round_bounds
 
 def group_junctions(junctions):
@@ -107,9 +108,10 @@ def group_junctions(junctions):
     for cluster_i in range(junctions.cluster.max()):
         cluster = junctions[junctions.cluster == cluster_i]
         sections_list = cluster.section.values.tolist()
-        roads_list = cluster.road.values.tolist()
+        # roads_list = cluster.road.values.tolist()
         cluster_mean = cluster.mean()
-        junctions_grouped.append([cluster_mean,roads_list,sections_list])
+        # junctions_grouped.append([cluster_mean,roads_list,sections_list])
+        junctions_grouped.append([cluster_mean,sections_list])
     return junctions_grouped
 
 def find_junctions(roads_interpolated):
@@ -122,7 +124,7 @@ def find_junctions(roads_interpolated):
     return junctions[junctions["cluster"] != -1].dropna()#.drop_duplicates(subset='cluster', keep="last")
 
 def find_neighbors(round_bounds):
-    bounds_matrix = np.ones([len(round_bounds),len(round_bounds)])#,2])
+    bounds_matrix = np.ones([len(round_bounds),len(round_bounds)])
     for bound_iy in range(len(round_bounds)):
         for bound_ix in range(bound_iy + 1,len(round_bounds)):
             north_diff = round_bounds.iloc[bound_ix].north - round_bounds.iloc[bound_iy].north
@@ -130,6 +132,19 @@ def find_neighbors(round_bounds):
             distance = np.sqrt((north_diff)**2 + (east_diff)**2)
             bounds_matrix[bound_ix,bound_iy] = distance
     return np.where(bounds_matrix < 0.5)
+
+def get_graph(round_bounds):
+    neighbors_list = list(([], ) * len(round_bounds))
+    for i,pointer in enumerate(neighbors[0]):
+        actual_content = neighbors_list[pointer].copy()
+        actual_content.append(neighbors[1][i])
+        neighbors_list[pointer] = actual_content
+    for i,pointer in enumerate(neighbors[1]):
+        actual_content = neighbors_list[pointer].copy()
+        actual_content.append(neighbors[0][i])
+        neighbors_list[pointer] = actual_content
+    return pd.concat([round_bounds, pd.DataFrame(neighbors_list)], axis=1)
+
 
 if __name__ == "__main__":
     roads = load_map(sys.argv[1])
@@ -143,6 +158,8 @@ if __name__ == "__main__":
     roads_grouped,round_bounds = get_new_roads(roads_interpolated)
 
     neighbors = find_neighbors(round_bounds)
+    round_bounds = get_graph(round_bounds)
+
 
 
     print_map(roads,end_point_df,roads_interpolated,junctions)
