@@ -40,6 +40,7 @@ python -m osgar.logger --stat *log
 python -m osgar.logger --stream imu.rotation --times *log
 python -m osgar.tools.lidarview --camera camera.raw --lidar lidar.scan --pose2d 
 
+
 mc
 
 
