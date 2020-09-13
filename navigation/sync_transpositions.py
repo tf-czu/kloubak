@@ -55,7 +55,7 @@ def xyz2enu(xyz,wgs_ref,method = 'def'):
                   [-np.cos(wgs_ref[0,1])*np.sin(wgs_ref[0,0]), -np.sin(wgs_ref[0,1])*np.sin(wgs_ref[0,0]),np.cos(wgs_ref[0,0])],
                   [np.cos(wgs_ref[0,1])*np.cos(wgs_ref[0,0]), np.sin(wgs_ref[0,1])*np.cos(wgs_ref[0,0]),np.sin(wgs_ref[0,0])]])
     enu = np.dot(xyz,R.T)
-    enu.T[1] = enu.T[1]*(-1)
+    # enu.T[1] = enu.T[1]*(-1)
     return enu
 
 def wgs2ECEF(wgs):
@@ -81,10 +81,8 @@ def wgs2enu(wgs,wgs_ref):
     xyz[:, 2] = xyz[:, 2] - xyz_ref[0, 2]
 
     R = np.array([[-np.sin(wgs_ref[0, 1]), np.cos(wgs_ref[0, 1]), 0],
-                  [-np.cos(wgs_ref[0, 1]) * np.sin(wgs_ref[0, 0]), -np.sin(wgs_ref[0, 1]) * np.sin(wgs_ref[0, 0]),
-                   np.cos(wgs_ref[0, 0])],
-                  [np.cos(wgs_ref[0, 1]) * np.cos(wgs_ref[0, 0]), np.sin(wgs_ref[0, 1]) * np.cos(wgs_ref[0, 0]),
-                   np.sin(wgs_ref[0, 0])]])
+                  [-np.cos(wgs_ref[0, 1]) * np.sin(wgs_ref[0, 0]), -np.sin(wgs_ref[0, 1]) * np.sin(wgs_ref[0, 0]),np.cos(wgs_ref[0, 0])],
+                  [np.cos(wgs_ref[0, 1]) * np.cos(wgs_ref[0, 0]), np.sin(wgs_ref[0, 1]) * np.cos(wgs_ref[0, 0]),np.sin(wgs_ref[0, 0])]])
     enu = np.dot(xyz, R.T)
 
     return enu
