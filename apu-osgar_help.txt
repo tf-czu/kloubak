@@ -5,7 +5,6 @@ git pull
 git stash
 
 root
-alix1corp2
 
 cat start.sh                                 
 nano start.sh
@@ -20,7 +19,6 @@ na notebooku v zelvickach
 je git push, zaskrtnout "Arbirary URL" a vyplnit:
 root@10.1.10.20:/home/robot/git/bare/osgar.git
 root@10.1.10.21:/home/robot/git/bare/osgar.git   (K2)
-zase stale stejne heslo alix1corp2
 
 
 
