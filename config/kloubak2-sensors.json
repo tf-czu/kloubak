@@ -93,27 +93,6 @@
           "out": ["raw"],
           "init": {"port": "/dev/lord-imu", "speed": 115200}
       },
-      "lora": {
-          "driver": "lora",
-          "in": ["raw", "pose2d"],
-          "out": ["raw", "cmd"],
-          "init": {}
-      },
-      "lora_serial": {
-          "driver": "serial",
-          "in": ["raw"],
-          "out": ["raw"],
-          "init": {"port": "/dev/lora", "speed": 115200}
-      },
-      "wifi": {
-          "driver": "subt.wifisignal:WifiSignal",
-          "in": [],
-          "out": ["wifiscan"],
-          "init": {
-            "sleep": 1.0,
-            "interface": "wlp5s0"
-          }
-      },
       "gas_detector": {
           "driver": "osgar.drivers.gas_detector:MeasureCO2",
           "in": ["raw"],
@@ -158,9 +137,6 @@
               ["kloubak.emergency_stop", "app.emergency_stop"],
               ["imu_serial.raw", "imu.raw"],
               ["imu.rotation", "app.rot"],
-              ["lora_serial.raw", "lora.raw"],
-              ["lora.raw", "lora_serial.raw"],
-              ["lora.cmd", "app.cmd"],
               ["kloubak.joint_angle", "app.joint_angle"],
               ["gas_serial.raw", "gas_detector.raw"],
               ["gas_detector.raw", "gas_serial.raw"]
