@@ -64,23 +64,21 @@ ISR(TIMER1_OVF_vect)  {
 
 void can_message_processing(int vesc_id) {
   int i;
-  int tacho;
   
-    for (i=0; i<10;i++) {
-      while((CAN.readMsgBuf(&len, buf))==CAN_NOMSG){
+    for (i=0; i<20;i++) {
+      while(CAN.checkReceive() != CAN_MSGAVAIL){
         if (Timer1Over == true){
-          break;
+          return;
         }
       }
-      if (buf[0]==42 && CAN.getCanId()==(CANvescID[vesc_id]+1280)){  
+      CAN.readMsgBuf(&len, buf);
+      CANmessageID = CAN.getCanId();
+      
+      if (buf[0]==7 && CANmessageID ==(CANvescID[vesc_id]+1280)){  
         create_tacho_buf_apu(vesc_id);
-      }
-      if (len < 8 && CAN.getCanId()==(CANvescID[vesc_id]+1280)){  
+        CANmessageID = 0;
         break;
-      }
-      if (Timer1Over == true){
-          break;
-      }
+     }   
     }  
 }
 
@@ -100,13 +98,12 @@ void sending_tacho_request(int vesc_id) {
   int can_id = 2048;
   
   request_buf[0] = CANvescID[vesc_id]; // one vesc4x --- CANvescID[0]
-  CAN.sendMsgBuf(0x00000+can_id+CANvescID[vesc_id], 1, 3, request_buf); // one vesc 6x
+  CAN.sendMsgBuf(0x00000+can_id+CANvescID[vesc_id], 1, 7, request_buf); // one vesc 6x
 }
 
 /*-------------------------- Sending CAN message to APU -------------------------*/
 
 void sending_tacho_apu(int vesc_id) {
- delayMicroseconds(20);
  if ((CANvescID[vesc_id] & 1) == 0) {
     CAN.sendMsgBuf(0x0+can_adress_transmit, 0, 6, tacho_buf);  // sending tacho infos to APU
     buffers_clear();
@@ -116,6 +113,9 @@ void sending_tacho_apu(int vesc_id) {
 /*-------------------------- create tacho_buf to apu -------------------------*/
 
 void create_tacho_buf_apu(int vesc_id) {
+  
+  buf[7] = buf[4];
+  buf[6] = buf[3];
   
   tacho_buf[0] = cycle_count;
   if (CANvescID[vesc_id] < 3) {

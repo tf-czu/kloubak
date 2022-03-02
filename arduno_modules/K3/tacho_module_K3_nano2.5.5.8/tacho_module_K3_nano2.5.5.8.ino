@@ -1,5 +1,5 @@
 //####################################################
-//#    KLOUBAK: Tacho Module K3 2.5.5.7
+//#    KLOUBAK: Tacho Module K3 2.5.5.8
 //#    Copyright (c) 2019 ROBOTIKA
 //#    programmed by: Tomas Picha, Martin Dlouhy
 //####################################################
@@ -34,7 +34,7 @@ int  CANmessageID; // can adress of incoming message
 byte buf[8];
 unsigned char len = 0;
 byte tacho_buf[tacho_message_lenth] = {0,0,0,0,0,0};
-byte request_buf[3] = {0,0,4}; 
+byte request_buf[7] = {0,0,50,0,0,32,1}; 
 
 byte cycle_count = 0;
 
