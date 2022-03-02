@@ -44,7 +44,7 @@ float Voltage (byte pin,float resist1, float resist2) {
   voltage = (voltage / (resist2/(resist1+resist2)));
   //voltage = (voltage-(voltage *0.07)); // korekce děliču - upravit 
 
-  Serial.println(voltage,3);
+  //Serial.println(voltage,3);
   return (voltage);
 }
 
@@ -95,10 +95,10 @@ void resistance_message(){
   for (int i=0;i<4;i++){
     buf_resistance[i]= resist / power(ground,(3-i));
     resist = resist - (buf_resistance[i] * power(ground,(3-i)));
-    Serial.print(" ");
-    Serial.print(power(ground,(3-i)));
-    Serial.print(" ");
-    Serial.print(buf_resistance[i]);
+    //Serial.print(" ");
+    //Serial.print(power(ground,(3-i)));
+    //Serial.print(" ");
+    //Serial.print(buf_resistance[i]);
   }
 }
 
