@@ -40,10 +40,7 @@ void CAN_filters_initial(){
 /*-----------------------wdt initial--------------------------------*/
 void wdt_initial(){
   // Enable watchdog.
-  WDT->WDT_MR = WDT_MR_WDD(0xFF) // velikost musí pokrýt hodnotě v WDT_MR_WDV(xx)
-                | WDT_MR_WDRPROC
-                | WDT_MR_WDRSTEN
-                | WDT_MR_WDV(33); //set wdt to 0,12890625‬ S
+  WDT->WDT_MR = WDT_MR_WDD(0xFF) | WDT_MR_WDRPROC | WDT_MR_WDRSTEN | WDT_MR_WDV(33); //WDT_MR_WDV(33)---> set wdt to 0,12890625‬ S; WDT_MR_WDD(0xFF)----> velikost musí pokrýt hodnotě v WDT_MR_WDV(xx)
                 /*| WDT_MR_WDV(256 * 2); // Watchdog triggers a reset after 2 seconds if underflow
                                        // 2 seconds equal 84000000 * 2 = 168000000 clock cycles
    Slow clock is running at 32.768 kHz
@@ -55,8 +52,7 @@ void wdt_initial(){
 
 void wdt_reset(){
   //Restart watchdog
-  WDT->WDT_CR = WDT_CR_KEY(WDT_KEY)
-                | WDT_CR_WDRSTT;
+  WDT->WDT_CR = WDT_CR_KEY(WDT_KEY) | WDT_CR_WDRSTT;
 }
 
 /*-----------------------pin mode initialization--------------------------------*/
