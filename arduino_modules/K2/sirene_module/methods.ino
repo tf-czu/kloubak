@@ -43,7 +43,7 @@ void wdt_initial(){
   WDT->WDT_MR = WDT_MR_WDD(0xFF) // velikost musí pokrýt hodnotě v WDT_MR_WDV(xx)
                 | WDT_MR_WDRPROC
                 | WDT_MR_WDRSTEN
-                | WDT_MR_WDV(33); //set wdt to 0.12890625‬ S
+                | WDT_MR_WDV(33); //set wdt to 0.12890625‬_S
                 /*| WDT_MR_WDV(256 * 2); // Watchdog triggers a reset after 2 seconds if underflow
                                        // 2 seconds equal 84000000 * 2 = 168000000 clock cycles
    Slow clock is running at 32.768 kHz
