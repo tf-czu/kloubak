@@ -13,7 +13,7 @@ class RcClient:
         self.bus.register("desired_speed")
         self.verbose = False
         self.max_spedd = 0.5
-        self.max_angular_speed = 2
+        self.max_angular_speed = 1
 
         pygame.init()
         screen = pygame.display.set_mode((100, 100))
@@ -49,9 +49,9 @@ class RcClient:
                         speed -= 0.1
 
                     if event.key == pygame.K_LEFT:
-                        angular_speed += 0.5
+                        angular_speed += 0.2
                     elif event.key == pygame.K_RIGHT:
-                        angular_speed -= 0.5
+                        angular_speed -= 0.2
 
                     if event.key == pygame.K_SPACE:
                         speed = 0
