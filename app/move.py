@@ -17,13 +17,17 @@ class Move(Node):
         channel = super().update() # define self.time
         if self.verbose:
             print(channel)
-        if channel == "pose2d":
-            print(self.pose2d)
+        # if channel == "pose2d":
+        #     print(self.pose2d)
+        # if channel == "scan":
+        #     print(len(self.scan))
+
 
     def send_speed_cmd(self, speed, angular_speed):
         return self.publish('desired_speed', [round(speed*1000), round(math.degrees(angular_speed)*100)])
 
     def wait(self, dt):
+        dt = timedelta(seconds=dt)
         if self.time is None:
             self.update()
         start_time = self.time
