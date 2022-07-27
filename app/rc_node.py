@@ -6,9 +6,9 @@ from osgar.node import Node
 
 
 def nearest_obstacle(scan):
-    scan = np.asarray(scan)
-    scan[scan < 100] = np.nan
-    return np.nanmin(scan)
+    scan = np.asarray(scan[3*45:3*225])
+    scan[scan < 100] = 20000
+    return np.min(scan)
 
 
 class RcNode(Node):
@@ -36,5 +36,4 @@ class RcNode(Node):
             elif speed < 0 and self.back_obstacle > self.limit:
                 self.publish("desired_speed", data)
             else:
-                self.publish("desired_speed" [0, 0])
-
+                self.publish("desired_speed", [0, 0])
