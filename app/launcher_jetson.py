@@ -8,6 +8,7 @@ import contextlib
 import zmq
 import time
 import osgar.lib.serialize
+from threading import Thread
 
 class OsgarLaunch:
     def __init__(self):
@@ -37,42 +38,43 @@ class OsgarLaunch:
 
 
 class ZmqPull:
-
-    def __init__(self, endpoint = "tcp://*:5555"):
-        self.context = zmq.Context.instance()
+    def __init__(self, endpoint = "tcp://*:5550"):
         self.endpoint = endpoint
+        self.message = None
 
     def pull_msg(self):
-        self.socket = self.context.socket(zmq.PULL)
+        context = zmq.Context.instance()
+        socket = context.socket(zmq.PULL)
         # https://stackoverflow.com/questions/7538988/zeromq-how-to-prevent-infinite-wait
-        self.socket.RCVTIMEO = 200  # milliseconds
+        socket.RCVTIMEO = 200  # milliseconds
 
-        self.socket.LINGER = 100
-        self.socket.bind(self.endpoint)
-        with contextlib.closing(self.socket):
-            try:
-                channel, raw = self.socket.recv_multipart()
-                message = osgar.lib.serialize.deserialize(raw)
-                # print(channel, message)
-                return message
+        socket.LINGER = 100
+        socket.bind(self.endpoint)
+        with contextlib.closing(socket):
+            while True:
+                try:
+                    channel, raw = socket.recv_multipart()
+                    message = osgar.lib.serialize.deserialize(raw)
+                    if message:
+                        self.message = message
 
-            except zmq.error.Again:
-                    pass
+                except zmq.error.Again:
+                        pass
+                time.sleep(2)
 
 
 def main():
     incomme = ZmqPull()
+    Thread(target=incomme.pull_msg, daemon=True).start()
     launcher = OsgarLaunch()
     running = False
     while True:
-        message = incomme.pull_msg()
+        message = incomme.message
         if message:
-            if message == "quit":
-                assert running == True, running
+            if message == "quit" and running:
                 launcher.quit()
                 running = False
-            else:
-                assert running == False
+            elif not running and message != "quit":
                 launcher.start(message)
                 running = True
 
