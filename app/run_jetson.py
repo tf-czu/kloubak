@@ -31,8 +31,10 @@ if __name__ == "__main__":
         print(__doc__)
         sys.exit()
     if len(sys.argv) == 3:
-        push_msg(sys.argv[1], sys.argv[2])
+        push_msg(sys.argv[1], sys.argv[2])  # config file and ip
+        time.sleep(10)
+        push_msg("quit", sys.argv[2])
     else:
         push_msg(sys.argv[1])
-    time.sleep(10)
-    push_msg("quit")
+        time.sleep(10)
+        push_msg("quit")
