@@ -1,5 +1,7 @@
 """
     Osgar launcher
+    The launcher_jetson is running on background and it receives messages through ZMQ (strings).
+    There are two types of messages: "quit" (terminate program) and config file which is passed to osgar.record.
 """
 
 import subprocess
@@ -10,7 +12,7 @@ import time
 import osgar.lib.serialize
 from threading import Thread
 
-class OsgarLaunch:
+class OsgarLauncher:
     def __init__(self):
         self.command = ["python3", "-m", "osgar.record"]
         self.shell = False  # or True?? is it needed?
@@ -66,7 +68,7 @@ class ZmqPull:
 def main():
     incomme = ZmqPull()
     Thread(target=incomme.pull_msg, daemon=True).start()
-    launcher = OsgarLaunch()
+    launcher = OsgarLauncher()
     running = False
     while True:
         message = incomme.message
