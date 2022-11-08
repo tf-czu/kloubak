@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "robot": {
+    "modules": {
+      "to_kloubak": {
+          "driver": "subt.push:Push",
+          "init": {
+            "endpoint": "tcp://10.0.0.21:5555"
+          }
+      },
+      "from_rc": {
+          "driver": "subt.pull:Pull",
+          "init": {
+            "bind": true,
+            "endpoint": "tcp://10.0.0.21:5555",
+            "outputs": ["desired_speed"]
+          }
+       }
+    },
+    "links": [
+      ["from_rc.desired_speed", "kloubak.slot_desired_speed"]
+    ]
+  }
+}

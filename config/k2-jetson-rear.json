@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "robot": {
+    "modules": {
+      "transmitter": {
+          "driver": "subt.push:Push",
+          "init": {
+            "bind": true,
+            "endpoint": "tcp://*:5557"
+          }
+      },
+      "receiver":{
+        "driver": "subt.pull:Pull",
+        "init": {
+          "bind": true,
+          "endpoint": "tcp://*:5558",
+          "outputs": ["pose3d", "joint_angle_pose"]
+        }
+      },
+      "realsense": {
+        "driver": "realsense_multicam",
+        "init": {
+          "devices": [{"type": "D400", "serial_number": "846112072840", "name": "rear"},
+                      {"type": "T200", "serial_number": "2322110715", "name": "tracking"}
+          ],
+          "depth_subsample": 5,
+          "depth_resolution": [
+            320,
+            240
+          ],
+          "depth_fps": 30,
+          "pose_subsample": 20
+        }
+      },
+      "to_front_jetson": {
+        "driver": "subt.push:Push",
+          "init": {
+            "endpoint": "tcp://192.168.0.23:5560"
+          }
+      }
+    },
+    "links": [
+      ["realsense.tracking_pose3d", "transmitter.pose3d"]
+    ]
+  }
+}
