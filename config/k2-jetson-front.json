@@ -46,7 +46,7 @@
           ],
           "depth_subsample": 5,
           "depth_resolution": [
-            320,
+            424,
             240
           ],
           "depth_fps": 30,
