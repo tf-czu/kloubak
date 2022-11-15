@@ -44,21 +44,27 @@
           "devices": [{"type": "D400", "serial_number": "939622072545", "name": "front"},
                       {"type": "T200", "serial_number": "929122111204", "name": "tracking"}
           ],
-          "depth_subsample": 5,
+          "depth_subsample": 3,
           "depth_resolution": [
-            424,
-            240
+            640,
+            360
           ],
           "depth_fps": 30,
           "pose_subsample": 20
         }
+      },
+      "depth2scan": {
+          "driver": "app.depth2scan_kloubak:DepthToScan",
+          "init": {}
       }
       },
     "links": [
       ["lidar_tcp.raw", "lidar.raw"],
       ["lidar.raw", "lidar_tcp.raw"],
 
-      ["realsense.tracking_pose3d", "transmitter.pose3d"]
+      ["realsense.tracking_pose3d", "transmitter.pose3d"],
+      ["realsense.depth", "depth2scan.depth"],
+      ["lidar.scan", "depth2scan.scan"]
     ]
   }
 }
