@@ -63,7 +63,7 @@
       ["lidar.raw", "lidar_tcp.raw"],
 
       ["realsense.tracking_pose3d", "transmitter.pose3d"],
-      ["realsense.depth", "depth2scan.depth"],
+      ["realsense.front_depth", "depth2scan.depth"],
       ["lidar.scan", "depth2scan.scan"]
     ]
   }
