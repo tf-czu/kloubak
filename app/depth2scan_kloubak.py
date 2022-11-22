@@ -13,7 +13,7 @@ class DepthToScan(Node):
         super().__init__(config, bus)
         bus.register("scan")
         self.depth = None  # initialize inputs
-        self.scan = None
+        self.last_scan = None
         self.verbose = False
         self.pitch = math.radians(-20)
         self.depth_params = DepthParams(**config.get('depth_params', {}))
@@ -22,11 +22,15 @@ class DepthToScan(Node):
         channel = super().update()
         assert channel in ["scan", "depth"], channel  # TODO pose3D
 
-        if channel == 'depth' and self.scan is not None:
+        if channel == 'depth':
             depth = self.depth/1000
-            scan = self.scan
             depth_scan = depth2dist(depth, self.depth_params, pitch = self.pitch)
-            new_scan = adjust_scan(scan, depth_scan, self.depth_params)
-            self.publish('scan', new_scan.tolist())
+            if self.last_scan is not None:
+                scan = self.last_scan
+                new_scan = adjust_scan(scan, depth_scan, self.depth_params)
+                self.publish('scan', new_scan.tolist())
+                self.last_scan = None
+            else:
+                self.publish('scan', depth_scan.tolist())
 
         return channel
