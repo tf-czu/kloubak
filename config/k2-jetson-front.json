@@ -55,7 +55,9 @@
       },
       "depth2scan": {
           "driver": "app.depth2scan_kloubak:DepthToScan",
-          "init": {"image_size": [424, 240]}
+          "init": {
+            "depth_params": {"image_size": [424, 240]}
+          }
       }
       },
     "links": [
