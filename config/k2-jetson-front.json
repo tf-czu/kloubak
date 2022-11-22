@@ -64,7 +64,10 @@
 
       ["realsense.tracking_pose3d", "transmitter.pose3d"],
       ["realsense.front_depth", "depth2scan.depth"],
-      ["lidar.scan", "depth2scan.scan"]
+      ["lidar.scan", "depth2scan.scan"],
+
+      ["depth2scan.scan", "transmitter.scan"],
+      ["lidar.scan", "transmitter.lidar_scan"]
     ]
   }
 }
