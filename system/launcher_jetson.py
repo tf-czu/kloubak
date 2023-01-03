@@ -58,6 +58,7 @@ class ZmqPull:
         socket.bind(self.endpoint)
         with contextlib.closing(socket):
             while True:
+                self.message = None
                 try:
                     channel, raw = socket.recv_multipart()
                     message = osgar.lib.serialize.deserialize(raw)
@@ -74,13 +75,23 @@ def main():
     Thread(target=incomme.pull_msg, daemon=True).start()
     launcher = OsgarLauncher()
     running = False
+    last_tick = None
     while True:
         message = incomme.message
+        if last_tick and not message:
+            if time.time() - last_tick > 5:
+                message = "quit"
         if message:
+            # print(message)
+            if message == "tick":
+                last_tick = time.time()
+
             if message == "quit" and running:
                 launcher.quit()
                 running = False
-            elif not running and message != "quit":
+                last_tick = None
+
+            elif not running and message not in ["quit", "tick"]:
                 launcher.start(message)
                 running = True
         if running:
