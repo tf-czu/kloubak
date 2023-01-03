@@ -47,10 +47,10 @@ class RunJetson:
         self.input_thread.start()
 
     def join(self, timeout=None):
-        push_msg('quit', self.endpoint)
         self.input_thread.join(timeout=timeout)
 
     def request_stop(self):
+        push_msg('quit', self.endpoint)
         self.bus.shutdown()
 
 
