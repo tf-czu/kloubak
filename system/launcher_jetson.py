@@ -16,10 +16,14 @@ class OsgarLauncher:
     def __init__(self):
         self.command = ["python3", "-m", "osgar.record"]
         self.shell = False  # or True?? is it needed?
+        self.running = None
 
     def start(self, config_file):
+        if self.running is not None:
+            assert self.running.poll() is not None
+            self.running = None
         self.command.append(config_file)
-        self.running = subprocess.Popen(self.command, shell=self.shell)
+        self.running = subprocess.Popen(self.command, shell=self.shell, stdout=subprocess.PIPE)
 
     def quit(self):
         self.running.send_signal(signal.SIGINT)
@@ -79,7 +83,10 @@ def main():
             elif not running and message != "quit":
                 launcher.start(message)
                 running = True
-
+        if running:
+            process_stdout = launcher.running.stdout.read()
+            if len(process_stdout) > 0:
+                print(process_stdout)
         time.sleep(2)
 
 
