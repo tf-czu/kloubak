@@ -98,6 +98,15 @@
           ]
         }
       },
+      "from_jetson_rear": {
+        "driver": "subt.pull:Pull",
+        "init": {
+          "endpoint": "tcp://192.168.0.24:5557",
+          "outputs": [
+            "scan", "lidar_scan", "pose3d"
+          ]
+        }
+      },
       "system": {
 	      "driver": "systemmonitor",
 	      "in": [],
