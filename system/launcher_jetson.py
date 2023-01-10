@@ -71,33 +71,31 @@ class ZmqPull:
 
 
 def main():
-    incomme = ZmqPull()
-    Thread(target=incomme.pull_msg, daemon=True).start()
+    income = ZmqPull()
+    Thread(target=income.pull_msg, daemon=True).start()
     launcher = OsgarLauncher()
-    running = False
+    is_running = False
     last_tick = None
     while True:
-        message = incomme.message
+        message = income.message
+        # print("income message", message)
         if last_tick and not message:
             if time.time() - last_tick > 5:
                 message = "quit"
+                print("delay, terminate the process")
         if message:
-            # print(message)
             if message == "tick":
                 last_tick = time.time()
 
-            if message == "quit" and running:
+            if message == "quit" and is_running:
                 launcher.quit()
-                running = False
+                is_running = False
                 last_tick = None
 
-            elif not running and message not in ["quit", "tick"]:
+            elif not is_running and message not in ["quit", "tick"]:
                 launcher.start(message)
-                running = True
-        if running:
-            process_stdout = launcher.running.stdout.read()
-            if len(process_stdout) > 0:
-                print(process_stdout)
+                is_running = True
+
         time.sleep(2)
 
 
