@@ -27,7 +27,7 @@
           "devices": [{"type": "D400", "serial_number": "846112072840", "name": "rear"},
                       {"type": "T200", "serial_number": "2322110715", "name": "tracking"}
           ],
-          "depth_subsample": 5,
+          "depth_subsample": 1,
           "depth_resolution": [
             424,
             240
