@@ -10,22 +10,6 @@
             "endpoint": "tcp://*:5557"
           }
       },
-      "from_apu_receiver":{
-        "driver": "subt.pull:Pull",
-        "init": {
-          "bind": true,
-          "endpoint": "tcp://*:5558",
-          "outputs": ["joint_angle_pose", "pose3d"]
-        }
-      },
-      "from_jetson_rear_receiver":{
-        "driver": "subt.pull:Pull",
-        "init": {
-          "bind": true,
-          "endpoint": "tcp://*:5560",
-          "outputs": ["depth"]
-        }
-      },
       "lidar": {
           "driver": "lidar",
           "in": ["raw"],
