@@ -9,13 +9,17 @@
             "endpoint": "tcp://*:5557"
           }
       },
-      "receiver":{
-        "driver": "subt.pull:Pull",
-        "init": {
-          "bind": true,
-          "endpoint": "tcp://*:5558",
-          "outputs": ["pose3d", "joint_angle_pose"]
-        }
+      "lidar_back": {
+          "driver": "lidar",
+          "in": ["raw"],
+          "out": ["raw", "scan"],
+          "init": {"sleep": 0.1, "mask": [45, -45], "blind_zone": 100}
+      },
+      "lidar_back_tcp": {
+          "driver": "tcp",
+          "in": ["raw"],
+          "out": ["raw"],
+          "init": {"host": "192.168.0.82", "port": 2111, "timeout": 0.5}
       },
       "realsense": {
         "driver": "realsense_multicam",
@@ -28,19 +32,27 @@
             424,
             240
           ],
-          "depth_fps": 30,
+          "depth_fps": 6,
           "pose_subsample": 20
         }
       },
-      "to_front_jetson": {
-        "driver": "subt.push:Push",
+      "depth2scan": {
+          "driver": "app.depth2scan_kloubak:DepthToScan",
           "init": {
-            "endpoint": "tcp://192.168.0.23:5560"
+            "depth_params": {"image_size": [424, 240]}
           }
       }
     },
     "links": [
-      ["realsense.tracking_pose3d", "transmitter.pose3d"]
+      ["lidar_back_tcp.raw", "lidar_back.raw"],
+      ["lidar_back.raw", "lidar_back_tcp.raw"],
+
+      ["realsense.tracking_pose3d", "transmitter.pose3d"],
+      ["realsense.rear_depth", "depth2scan.depth"],
+      ["lidar_back.scan", "depth2scan.scan"],
+
+      ["depth2scan.scan", "transmitter.scan"],
+      ["lidar_back.scan", "transmitter.lidar_scan"]
     ]
   }
 }
