@@ -21,6 +21,8 @@ class DepthToScan(Node):
     def update(self):
         channel = super().update()
         assert channel in ["scan", "depth"], channel  # TODO pose3D
+        if channel == "scan":
+            self.last_scan = self.scan
 
         if channel == 'depth':
             depth = self.depth/1000
@@ -31,6 +33,6 @@ class DepthToScan(Node):
                 self.publish('scan', new_scan.tolist())
                 self.last_scan = None
             else:
-                self.publish('scan', depth_scan.tolist())
+                self.publish('scan', depth_scan[::-1])
 
         return channel
