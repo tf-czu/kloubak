@@ -33,6 +33,7 @@ class DepthToScan(Node):
                 self.publish('scan', new_scan.tolist())
                 self.last_scan = None
             else:
-                self.publish('scan', depth_scan[::-1])
+                pass
+                # self.publish('scan', depth_scan[::-1])
 
         return channel
