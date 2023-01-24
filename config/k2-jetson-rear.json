@@ -39,7 +39,11 @@
       "depth2scan": {
           "driver": "app.depth2scan_kloubak:DepthToScan",
           "init": {
-            "depth_params": {"image_size": [424, 240]}
+            "depth_params": {
+              "image_size": [424, 240],
+              "camera_xyz": [0.12, 0, 0.52],
+              "principal_point": [212.5, 120.5]
+            }
           }
       }
     },
