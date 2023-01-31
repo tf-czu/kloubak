@@ -99,7 +99,7 @@ def main():
                 launcher.start(message)
                 is_running = True
 
-        time.sleep(2)
+        time.sleep(1.5)
 
 
 if __name__ == "__main__":
