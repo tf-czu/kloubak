@@ -81,6 +81,9 @@ def main():
         # print("income message", message)
         if last_tick and not message:
             if time.time() - last_tick > 5:
+                if not is_running:
+                    last_tick = None
+                    continue
                 message = "quit"
                 print("delay, terminate the process")
         if message:
