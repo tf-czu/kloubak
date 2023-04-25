@@ -107,6 +107,10 @@
           ]
         }
       },
+      "combine_scans": {
+        "driver": "app.scan360:Scan360",
+        "init": {}
+      },
       "system": {
 	      "driver": "systemmonitor",
 	      "in": [],
@@ -123,7 +127,11 @@
               ["kloubak.pose2d", "localization.odom"],
               ["from_rc.desired_speed", "kloubak.slot_desired_speed"],
               ["imu.orientation", "localization.orientation"],
-              ["imu_serial.raw", "imu.raw"]
+              ["imu_serial.raw", "imu.raw"],
+              ["from_rc.desired_speed", "scan360.desired_speed"],
+              ["kloubak.joint_angle", "scan360.joint_angle"],
+              ["from_jetson_front.scan", "scan360.scan_front"],
+              ["from_jetson_rear.scan", "scan360.scan_rear"]
     ]
   }
 }
