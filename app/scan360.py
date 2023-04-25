@@ -59,4 +59,4 @@ class Scan360(Node):
             self.process_scans()
 
     def on_joint_angle(self, data):
-        self.joint_angle = data/100
+        self.joint_angle = data[0]/100
