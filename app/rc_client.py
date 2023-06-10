@@ -6,6 +6,8 @@ import math
 from threading import Thread
 
 ROBOT_LENGTH = 0.348 * 2  # just for K2
+MAX_SPEED = 0.5
+
 
 def angel_angular_speed(angel, speed):
     return math.tan(math.radians(angel)) * speed / ROBOT_LENGTH
@@ -35,8 +37,6 @@ class RcClient:
         angular_speed = math.copysign(min(self.max_angular_speed, abs(angular_speed)), angular_speed)
         self.bus.publish('desired_speed', [round(speed * 1000), round(math.degrees(angular_speed) * 100)])
 
-        return speed, angular_speed
-
 
     def run_input(self):
         speed = 0
@@ -49,24 +49,26 @@ class RcClient:
             for event in events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        speed += 0.1
+                        speed = min(speed + 0.1, MAX_SPEED)
+                        angular_speed = angel_angular_speed(angel, speed)
+
                     elif event.key == pygame.K_DOWN:
-                        speed -= 0.1
+                        speed = max(speed - 0.1, -MAX_SPEED)
+                        angular_speed = angel_angular_speed(angel, speed)
 
                     if event.key == pygame.K_LEFT:
-                        angel += 10
+                        angel = min(angel + 10, 70)
                         angular_speed = angel_angular_speed(angel, speed)
                     elif event.key == pygame.K_RIGHT:
-                        angular_speed -= 10
+                        angel = max(angel - 10, -70)
                         angular_speed = angel_angular_speed(angel, speed)
 
                     if event.key == pygame.K_SPACE:
                         speed = 0
                         angular_speed = 0
 
-            last_speed, last_angular_speed = self.send_speed(speed, angular_speed)
-            if last_speed != speed or last_angular_speed != angular_speed:
-                print(speed, angular_speed, angel)
+                    print(f"{speed:0.1f}, {angular_speed:0.3f}, {angel}")
+                    self.send_speed(speed, angular_speed)
 
 
     def request_stop(self):
