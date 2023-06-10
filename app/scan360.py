@@ -41,7 +41,7 @@ class Scan360(Node):
         if scan_360 is not None:
             self.publish("scan360", scan_360)
 
-    def on_desired_spped(self, data):
+    def on_desired_speed(self, data):
         speed, angular_speed = data
         if speed < 0:
             self.move_backward = True
