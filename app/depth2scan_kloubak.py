@@ -18,22 +18,14 @@ class DepthToScan(Node):
         self.pitch = math.radians(20)
         self.depth_params = DepthParams(**config.get('depth_params', {}))
 
-    def update(self):
-        channel = super().update()
-        assert channel in ["scan", "depth"], channel  # TODO pose3D
-        if channel == "scan":
-            self.last_scan = self.scan
+    def on_scan(self, data):
+        self.last_scan = data
 
-        if channel == 'depth':
-            depth = self.depth/1000
-            depth_scan = depth2dist(depth, self.depth_params, pitch = self.pitch)
-            if self.last_scan is not None:
-                scan = self.last_scan
-                new_scan = adjust_scan(scan, depth_scan, self.depth_params)
-                self.publish('scan', new_scan.tolist())
-                self.last_scan = None
-            else:
-                pass
-                # self.publish('scan', depth_scan[::-1])
-
-        return channel
+    def on_depth(self, data):
+        depth = data/1000
+        depth_scan = depth2dist(depth, self.depth_params, pitch = self.pitch)
+        if self.last_scan is not None:
+            scan = self.last_scan
+            new_scan = adjust_scan(scan, depth_scan, self.depth_params)
+            self.publish('scan', new_scan.tolist())
+            self.last_scan = None
