@@ -124,7 +124,7 @@
               ["can.raw", "serial.slot_raw"],
               ["kloubak.can", "can.slot_can"],
               ["can.can", "kloubak.slot_can"],
-      
+
               ["kloubak.pose2d", "localization.odom"],
               ["from_rc.desired_speed", "kloubak.slot_desired_speed"],
               ["imu.orientation", "localization.orientation"],
