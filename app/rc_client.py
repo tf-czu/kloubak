@@ -5,6 +5,11 @@ import pygame
 import math
 from threading import Thread
 
+ROBOT_LENGTH = 0.348 * 2  # just for K2
+
+def angel_angular_speed(angel, speed):
+    return math.tan(math.radians(angel)) * speed / ROBOT_LENGTH
+
 
 class RcClient:
     def __init__(self, config, bus):
@@ -29,7 +34,6 @@ class RcClient:
         speed = math.copysign(min(self.max_spedd, abs(speed)), speed)
         angular_speed = math.copysign(min(self.max_angular_speed, abs(angular_speed)), angular_speed)
         self.bus.publish('desired_speed', [round(speed * 1000), round(math.degrees(angular_speed) * 100)])
-        print(speed, angular_speed)
 
         return speed, angular_speed
 
@@ -37,6 +41,7 @@ class RcClient:
     def run_input(self):
         speed = 0
         angular_speed = 0
+        angel = 0
 
         while self.bus.is_alive():
             self.bus.sleep(0.1)
@@ -49,15 +54,19 @@ class RcClient:
                         speed -= 0.1
 
                     if event.key == pygame.K_LEFT:
-                        angular_speed += 0.2
+                        angel += 10
+                        angular_speed = angel_angular_speed(angel, speed)
                     elif event.key == pygame.K_RIGHT:
-                        angular_speed -= 0.2
+                        angular_speed -= 10
+                        angular_speed = angel_angular_speed(angel, speed)
 
                     if event.key == pygame.K_SPACE:
                         speed = 0
                         angular_speed = 0
 
-            speed, angular_speed = self.send_speed(speed, angular_speed)
+            last_speed, last_angular_speed = self.send_speed(speed, angular_speed)
+            if last_speed != speed or last_angular_speed != angular_speed:
+                print(speed, angular_speed, angel)
 
 
     def request_stop(self):
