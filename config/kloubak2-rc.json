@@ -107,7 +107,7 @@
           ]
         }
       },
-      "combine_scans": {
+      "scan360": {
         "driver": "app.scan360:Scan360",
         "init": {}
       },
@@ -124,10 +124,12 @@
               ["can.raw", "serial.slot_raw"],
               ["kloubak.can", "can.slot_can"],
               ["can.can", "kloubak.slot_can"],
+      
               ["kloubak.pose2d", "localization.odom"],
               ["from_rc.desired_speed", "kloubak.slot_desired_speed"],
               ["imu.orientation", "localization.orientation"],
               ["imu_serial.raw", "imu.raw"],
+
               ["from_rc.desired_speed", "scan360.desired_speed"],
               ["kloubak.joint_angle", "scan360.joint_angle"],
               ["from_jetson_front.scan", "scan360.scan_front"],
