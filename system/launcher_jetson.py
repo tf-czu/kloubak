@@ -90,12 +90,12 @@ def main():
             if message == "tick":
                 last_tick = time.time()
 
-            if message == "quit" and is_running:
+            elif message == "quit" and is_running:
                 launcher.quit()
                 is_running = False
                 last_tick = None
 
-            elif not is_running and message not in ["quit", "tick"]:
+            elif not is_running and message != "quit":
                 launcher.start(message)
                 is_running = True
 
