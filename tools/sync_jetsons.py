@@ -16,7 +16,7 @@ def main():
     if args.jetson == []:
         jetsons = all_jetsons
     else:
-        jetsons = {k: all_jetsons[k] for k in args.robots}
+        jetsons = {k: all_jetsons[k] for k in args.jetson}
 
     home = "/home/robot/git/logs"
     for jetson, logs in jetsons.items():
