@@ -15,7 +15,7 @@ class DepthToScan(Node):
         self.depth = None  # initialize inputs
         self.last_scan = None
         self.verbose = False
-        self.pitch = math.radians(20)
+        self.pitch = math.radians(config.get("pitch", 0))
         self.depth_params = DepthParams(**config.get('depth_params', {}))
 
     def on_scan(self, data):
