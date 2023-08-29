@@ -43,10 +43,7 @@ class Scan360(Node):
 
     def on_desired_speed(self, data):
         speed, angular_speed = data
-        if speed < 0:
-            self.move_backward = True
-        else:
-            self.move_backward = False
+        self.move_backward = speed < 0
 
     def on_scan_rear(self, data):
         self.scan_rear = data
