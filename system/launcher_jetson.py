@@ -16,10 +16,14 @@ class OsgarLauncher:
     def __init__(self):
         self.command = ["python3", "-m", "osgar.record"]
         self.shell = False  # or True?? is it needed?
+        self.running = None
 
     def start(self, config_file):
+        if self.running is not None:
+            assert self.running.poll() is not None
+            self.running = None
         self.command.append(config_file)
-        self.running = subprocess.Popen(self.command, shell=self.shell)
+        self.running = subprocess.Popen(self.command, shell=self.shell, stdout=subprocess.PIPE)
 
     def quit(self):
         self.running.send_signal(signal.SIGINT)
@@ -54,6 +58,7 @@ class ZmqPull:
         socket.bind(self.endpoint)
         with contextlib.closing(socket):
             while True:
+                self.message = None
                 try:
                     channel, raw = socket.recv_multipart()
                     message = osgar.lib.serialize.deserialize(raw)
@@ -66,21 +71,35 @@ class ZmqPull:
 
 
 def main():
-    incomme = ZmqPull()
-    Thread(target=incomme.pull_msg, daemon=True).start()
+    income = ZmqPull()
+    Thread(target=income.pull_msg, daemon=True).start()
     launcher = OsgarLauncher()
-    running = False
+    is_running = False
+    last_tick = None
     while True:
-        message = incomme.message
+        message = income.message
+        # print("income message", message)
+        if last_tick and not message:
+            if time.time() - last_tick > 5:
+                if not is_running:
+                    last_tick = None
+                    continue
+                message = "quit"
+                print("delay, terminate the process")
         if message:
-            if message == "quit" and running:
-                launcher.quit()
-                running = False
-            elif not running and message != "quit":
-                launcher.start(message)
-                running = True
+            if message == "tick":
+                last_tick = time.time()
 
-        time.sleep(2)
+            elif message == "quit" and is_running:
+                launcher.quit()
+                is_running = False
+                last_tick = None
+
+            elif not is_running and message != "quit":
+                launcher.start(message)
+                is_running = True
+
+        time.sleep(1.5)
 
 
 if __name__ == "__main__":

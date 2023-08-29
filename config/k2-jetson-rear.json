@@ -1,0 +1,64 @@
+{
+  "version": 2,
+  "robot": {
+    "modules": {
+      "transmitter": {
+          "driver": "subt.push:Push",
+          "init": {
+            "bind": true,
+            "endpoint": "tcp://*:5557"
+          }
+      },
+      "lidar_back": {
+          "driver": "lidar",
+          "in": ["raw"],
+          "out": ["raw", "scan"],
+          "init": {"sleep": 0.1, "mask": [45, -45], "blind_zone": 100}
+      },
+      "lidar_back_tcp": {
+          "driver": "tcp",
+          "in": ["raw"],
+          "out": ["raw"],
+          "init": {"host": "192.168.0.82", "port": 2111, "timeout": 0.5}
+      },
+      "realsense": {
+        "driver": "realsense_multicam",
+        "init": {
+          "devices": [{"type": "D400", "serial_number": "846112072840", "name": "rear"},
+                      {"type": "T200", "serial_number": "2322110715", "name": "tracking"}
+          ],
+          "depth_subsample": 1,
+          "depth_resolution": [
+            424,
+            240
+          ],
+          "depth_fps": 6,
+          "pose_subsample": 20
+        }
+      },
+      "depth2scan": {
+          "driver": "app.depth2scan_kloubak:DepthToScan",
+          "init": {
+            "pitch": 20,
+            "depth_params": {
+              "image_size": [424, 240],
+              "camera_xyz": [0.12, 0, 0.52],
+              "principal_point": [212.5, 120.5],
+              "fx": 210.749282836914
+            }
+          }
+      }
+    },
+    "links": [
+      ["lidar_back_tcp.raw", "lidar_back.raw"],
+      ["lidar_back.raw", "lidar_back_tcp.raw"],
+
+      ["realsense.tracking_pose3d", "transmitter.pose3d"],
+      ["realsense.rear_depth", "depth2scan.depth"],
+      ["lidar_back.scan", "depth2scan.scan"],
+
+      ["depth2scan.scan", "transmitter.scan"],
+      ["lidar_back.scan", "transmitter.lidar_scan"]
+    ]
+  }
+}

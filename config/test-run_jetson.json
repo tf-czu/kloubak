@@ -5,7 +5,7 @@
       "rc": {
         "driver": "app.run_jetson:RunJetson",
         "init": {
-          "host": "192.168.0.23",
+          "host": "127.0.0.1",
           "task": "git/osgar/config/test-realsense-D400.json"
         }
       }

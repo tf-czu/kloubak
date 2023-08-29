@@ -42,6 +42,7 @@ class RunJetson:
         push_msg(self.task, self.endpoint)
         while self.bus.is_alive():
             self.bus.sleep(2)
+            push_msg("tick", self.endpoint)
 
     def start(self):
         self.input_thread.start()
@@ -51,6 +52,7 @@ class RunJetson:
         self.input_thread.join(timeout=timeout)
 
     def request_stop(self):
+        push_msg('quit', self.endpoint)
         self.bus.shutdown()
 
 

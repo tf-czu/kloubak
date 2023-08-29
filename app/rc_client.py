@@ -5,6 +5,12 @@ import pygame
 import math
 from threading import Thread
 
+ROBOT_LENGTH = 0.348 * 2  # just for K2
+
+
+def angle_angular_speed(angel, speed):
+    return math.tan(math.radians(angel)) * speed / ROBOT_LENGTH
+
 
 class RcClient:
     def __init__(self, config, bus):
@@ -12,8 +18,8 @@ class RcClient:
         self.bus = bus
         self.bus.register("desired_speed")
         self.verbose = False
-        self.max_spedd = 0.5
-        self.max_angular_speed = 1
+        self.max_speed = 0.5
+        self.max_angular_speed = 2
 
         pygame.init()
         screen = pygame.display.set_mode((100, 100))
@@ -26,17 +32,14 @@ class RcClient:
         self.input_thread.join(timeout=timeout)
 
     def send_speed(self, speed, angular_speed):
-        speed = math.copysign(min(self.max_spedd, abs(speed)), speed)
         angular_speed = math.copysign(min(self.max_angular_speed, abs(angular_speed)), angular_speed)
         self.bus.publish('desired_speed', [round(speed * 1000), round(math.degrees(angular_speed) * 100)])
-        print(speed, angular_speed)
-
-        return speed, angular_speed
 
 
     def run_input(self):
         speed = 0
-        angular_speed = 0
+        angle = 0  # degrees
+        max_speed = self.max_speed
 
         while self.bus.is_alive():
             self.bus.sleep(0.1)
@@ -44,21 +47,24 @@ class RcClient:
             for event in events:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_UP:
-                        speed += 0.1
+                        speed = min(speed + 0.1, max_speed)
+
                     elif event.key == pygame.K_DOWN:
-                        speed -= 0.1
+                        speed = max(speed - 0.1, -max_speed)
 
-                    if event.key == pygame.K_LEFT:
-                        angular_speed += 0.2
+                    elif event.key == pygame.K_LEFT:
+                        angle = min(angle + 10, 70)
+
                     elif event.key == pygame.K_RIGHT:
-                        angular_speed -= 0.2
+                        angle = max(angle - 10, -70)
 
-                    if event.key == pygame.K_SPACE:
+                    elif event.key == pygame.K_SPACE:
                         speed = 0
-                        angular_speed = 0
+                        angle = 0
 
-            speed, angular_speed = self.send_speed(speed, angular_speed)
-
+                    angular_speed = angle_angular_speed(angle, speed)
+                    print(f"{speed:0.1f}, {angular_speed:0.3f}, {angle}")
+                    self.send_speed(speed, angular_speed)
 
     def request_stop(self):
         self.bus.shutdown()
