@@ -10,7 +10,7 @@ def main():
 
     import argparse
     parser = argparse.ArgumentParser(description='rsync logs from jetsons to apu')
-    parser.add_argument('jetson', nargs='*', choices=list(all_jetsons.keys()) + [[]], default=[])
+    parser.add_argument('jetson', nargs='*', choices=list(all_jetsons.keys()), default=[])
     args = parser.parse_args()
 
     if args.jetson == []:
