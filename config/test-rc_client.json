@@ -7,7 +7,7 @@
         "init": {}
       },
       "to_k2": {
-          "driver": "subt.push:Push",
+          "driver": "osgar.drivers.push:Push",
           "init": {
             "endpoint": "tcp://10.1.10.21:5555"
           }

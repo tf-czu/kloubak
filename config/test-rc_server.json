@@ -85,13 +85,13 @@
       },
 
       "to_k2": {
-          "driver": "subt.push:Push",
+          "driver": "osgar.drivers.push:Push",
           "init": {
             "endpoint": "tcp://10.0.0.21:5555"
           }
       },
       "from_rc": {
-          "driver": "subt.pull:Pull",
+          "driver": "osgar.drivers.pull:Pull",
           "init": {
             "bind": true,
             "endpoint": "tcp://10.0.0.21:5555",

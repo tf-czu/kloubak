@@ -3,7 +3,7 @@
   "robot": {
     "modules": {
       "transmitter": {
-          "driver": "subt.push:Push",
+          "driver": "osgar.drivers.push:Push",
           "init": {
             "bind": true,
             "endpoint": "tcp://*:5557"
