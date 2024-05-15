@@ -33,7 +33,8 @@ class GoStraight(Node):
 
     def go_safely(self, speed, angular_speed, scan):
         obs_dist, obs_direction = self.get_nearest_obstacle(scan)
-        if obs_dist < 1.0:
+        if obs_dist < 500:  # mm
+            print("obstackle!")
             speed = 0
         self.send_speed_cmd(speed, angular_speed)
 

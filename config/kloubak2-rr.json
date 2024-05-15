@@ -3,7 +3,7 @@
   "robot": {
     "modules": {
       "app": {
-          "driver": "application",
+          "driver": "app.go_straight:GoStraight",
           "in": ["scan", "emergency_stop", "pose3d", "joint_angle"],
           "out": ["desired_speed"],
           "init": {
