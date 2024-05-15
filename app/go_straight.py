@@ -35,9 +35,15 @@ class GoStraight(Node):
 
     def go_safely(self, speed, angular_speed, scan):
         obs_dist, obs_direction = self.get_nearest_obstacle(scan)
-        if obs_dist < 500:  # mm
+
+        if obs_dist > 500:  # mm
+            # influencing obstacle 0.5 - 1.0 m
+            speed = max(0.1, speed * min(1, (obs_dist - 500) / 500))
+        else:
             print("Obstacle!")
             speed = 0
+        if self.verbose:
+            print(f"Obstacle dist: {obs_dist} mm, speed: {speed} m/s")
         self.send_speed_cmd(speed, angular_speed)
 
     def on_pose3d(self, data):
