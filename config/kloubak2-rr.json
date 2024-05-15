@@ -100,6 +100,23 @@
 	      "out": ["pose3d"],
 	      "init":{}
       },
+
+      "gps": {
+        "driver": "gps",
+        "in": ["raw"],
+        "out": ["position", "rel_position"],
+        "init": {}
+      },
+      "gps_serial": {
+        "driver": "serial",
+        "in": [],
+        "out": ["raw"],
+        "init": {
+          "port": "/dev/gps_ublox",
+          "speed": 115200
+        }
+      },
+
       "system": {
 	      "driver": "systemmonitor",
 	      "in": [],
@@ -115,6 +132,7 @@
               ["kloubak.joint_angle", "app.joint_angle"],
               ["lidar.scan", "app.scan"],
               ["localization.pose3d", "app.pose3d"],
+              ["gps.position", "app.position"],
 
               ["serial.raw", "can.slot_raw"],
               ["can.raw", "serial.slot_raw"],
@@ -128,7 +146,9 @@
               ["lidar_tcp.raw", "lidar.raw"],
               ["lidar.raw", "lidar_tcp.raw"],
               ["lidar_back_tcp.raw", "lidar_back.raw"],
-              ["lidar_back.raw", "lidar_back_tcp.raw"]
+              ["lidar_back.raw", "lidar_back_tcp.raw"],
+
+              ["gps_serial.raw", "gps.raw"]
     ]
   }
 }

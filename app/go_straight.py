@@ -44,6 +44,12 @@ class GoStraight(Node):
     def on_emergency_stop(self, data):
         self.emergency_stop = data
 
+    def on_joint_angle(self, data):
+        pass
+
+    def on_position(self, data):
+        pass
+
     def on_scan(self, scan):
         if not self.emergency_stop and self.pose:
             self.go_safely(self.max_speed, 0, scan)
