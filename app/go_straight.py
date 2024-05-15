@@ -1,8 +1,7 @@
 """
   Go robot straight
 """
-
-import math
+import datetime
 
 import numpy as np
 
@@ -18,6 +17,9 @@ class GoStraight(Node):
 
         self.pose = None
         self.emergency_stop = None
+        self.start_heading = None
+        self.last_heading = None
+        self.last_heading_time = None
 
     @staticmethod
     def get_nearest_obstacle(scan):
@@ -25,22 +27,30 @@ class GoStraight(Node):
         scan[scan<100] = 20_000
         return np.min(scan), np.argmin(scan)
 
-    def send_speed_cmd(self, speed, angular_speed):
+    def send_speed_cmd(self, speed, angular_speed_deg):
         return self.bus.publish(
             'desired_speed',
-            [round(speed*1000), round(math.degrees(angular_speed)*100)]
+            [round(speed*1000), round(angular_speed_deg)*100]
         )
 
     def go_safely(self, speed, angular_speed, scan):
         obs_dist, obs_direction = self.get_nearest_obstacle(scan)
         if obs_dist < 500:  # mm
-            print("obstackle!")
+            print("Obstacle!")
             speed = 0
         self.send_speed_cmd(speed, angular_speed)
 
     def on_pose3d(self, data):
         (x, y, z), q = data
         self.pose = [x, y]
+
+    def on_rotation(self, data):
+        if self.start_heading:
+            self.last_heading = data[0]/100
+            self.last_heading_time = self.time
+        else:
+            assert self.start_heading is None
+            self.start_heading = data[0]/100
 
     def on_emergency_stop(self, data):
         self.emergency_stop = data
@@ -52,6 +62,10 @@ class GoStraight(Node):
         pass
 
     def on_scan(self, scan):
-        if not self.emergency_stop and self.pose:
-            self.go_safely(self.max_speed, 0, scan)
-
+        if not self.emergency_stop and self.last_heading:
+            if (self.time - self.last_heading_time) < datetime.timedelta(seconds=1):
+                angular_speed_deg = 0.5*(self.start_heading - self.last_heading)
+            else:
+                print("Lost IMU!")
+                angular_speed_deg = 0
+            self.go_safely(self.max_speed, angular_speed_deg, scan)

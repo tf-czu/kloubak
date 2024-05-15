@@ -133,6 +133,7 @@
               ["lidar.scan", "app.scan"],
               ["localization.pose3d", "app.pose3d"],
               ["gps.position", "app.position"],
+              ["imu.rotation", "app.rotation"],
 
               ["serial.raw", "can.slot_raw"],
               ["can.raw", "serial.slot_raw"],
