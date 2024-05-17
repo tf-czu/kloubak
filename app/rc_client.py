@@ -1,7 +1,6 @@
 """
     Osgar remote control via pygame
 """
-import pygame
 import math
 from threading import Thread
 
@@ -20,6 +19,8 @@ class RcClient:
         self.verbose = False
         self.max_speed = 0.5
         self.max_angular_speed = 2
+        import pygame
+        global pygame
 
         pygame.init()
         screen = pygame.display.set_mode((100, 100))
