@@ -2,10 +2,20 @@
   Go robot straight
 """
 import datetime
+import math
 
 import numpy as np
 
 from osgar.node import Node
+from app.rc_client import angle_angular_speed
+
+
+def get_diff_angle(phi_0, phi):
+    diff = phi_0 - phi
+    adjusted_diff = phi_0 - phi + math.copysign(360, -diff)
+    if abs(diff) <= abs(adjusted_diff):
+        return diff
+    return adjusted_diff
 
 
 class GoStraight(Node):
@@ -27,13 +37,13 @@ class GoStraight(Node):
         scan[scan<100] = 20_000
         return np.min(scan), np.argmin(scan)
 
-    def send_speed_cmd(self, speed, angular_speed_deg):
+    def send_speed_cmd(self, speed, angular_speed):
         return self.bus.publish(
             'desired_speed',
-            [round(speed*1000), round(angular_speed_deg)*100]
+            [round(speed*1000), round(math.degrees(angular_speed))*100]
         )
 
-    def go_safely(self, speed, angular_speed, scan):
+    def go_safely(self, speed, angle, scan):
         obs_dist, obs_direction = self.get_nearest_obstacle(scan)
 
         if obs_dist > 500:  # mm
@@ -44,6 +54,8 @@ class GoStraight(Node):
             speed = 0
         if self.verbose:
             print(f"Obstacle dist: {obs_dist} mm, speed: {speed} m/s")
+
+        angular_speed = angle_angular_speed(speed, angle)
         self.send_speed_cmd(speed, angular_speed)
 
     def on_pose3d(self, data):
@@ -70,8 +82,8 @@ class GoStraight(Node):
     def on_scan(self, scan):
         if not self.emergency_stop and self.last_heading:
             if (self.time - self.last_heading_time) < datetime.timedelta(seconds=1):
-                angular_speed_deg = 0.5*(self.start_heading - self.last_heading)
+                direction_diff_deg = get_diff_angle(self.start_heading, self.last_heading)
             else:
                 print("Lost IMU!")
-                angular_speed_deg = 0
-            self.go_safely(self.max_speed, angular_speed_deg, scan)
+                direction_diff_deg = 0
+            self.go_safely(self.max_speed, direction_diff_deg, scan)
