@@ -57,7 +57,7 @@ class GoStraight(Node):
             print("Obstacle!")
             speed = 0
         if self.verbose:
-            print(f"Obstacle dist: {obs_dist} mm, speed: {speed} m/s")
+            print(f"{self.time}, Obstacle dist: {obs_dist} mm, speed: {speed} m/s")
 
         angular_speed = angle_angular_speed(speed, angle)
         self.send_speed_cmd(speed, angular_speed)
