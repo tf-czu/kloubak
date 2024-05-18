@@ -7,7 +7,7 @@
           "in": ["scan", "emergency_stop", "pose3d", "joint_angle"],
           "out": ["desired_speed"],
           "init": {
-            "max_speed": 0.5
+            "max_speed": 0.7
           }
       },
       "kloubak": {
