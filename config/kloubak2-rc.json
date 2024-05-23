@@ -62,7 +62,7 @@
           "init": {"port": "/dev/lord-imu", "speed": 115200}
       },
       "localization": {
-	      "driver": "subt.odoimuloc:Localization",
+	      "driver": "osgar.drivers.odoimuloc:Localization",
 	      "in": ["orientation", "odom"],
 	      "out": ["pose3d"],
 	      "init":{}
@@ -82,7 +82,7 @@
         }
       },
       "from_rc": {
-          "driver": "subt.pull:Pull",
+          "driver": "osgar.drivers.pull:Pull",
           "init": {
             "bind": true,
             "endpoint": "tcp://*:5555",
@@ -90,7 +90,7 @@
           }
        },
       "from_jetson_front": {
-        "driver": "subt.pull:Pull",
+        "driver": "osgar.drivers.pull:Pull",
         "init": {
           "endpoint": "tcp://192.168.0.23:5557",
           "outputs": [
@@ -99,7 +99,7 @@
         }
       },
       "from_jetson_rear": {
-        "driver": "subt.pull:Pull",
+        "driver": "osgar.drivers.pull:Pull",
         "init": {
           "endpoint": "tcp://192.168.0.24:5557",
           "outputs": [
