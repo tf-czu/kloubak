@@ -30,7 +30,6 @@ class GoStraight(Node):
         self.start_heading = None
         self.last_heading = None
         self.last_heading_time = None
-        self.scan = None
 
     @staticmethod
     def get_nearest_obstacle(scan):
@@ -45,10 +44,7 @@ class GoStraight(Node):
         )
 
     def go_safely(self, speed, angle, scan):
-        if scan:
-            obs_dist, obs_direction = self.get_nearest_obstacle(scan)
-        else:
-            obs_dist = 1000
+        obs_dist, obs_direction = self.get_nearest_obstacle(scan)
 
         if obs_dist > 500:  # mm
             # influencing obstacle 0.5 - 1.0 m
@@ -74,14 +70,6 @@ class GoStraight(Node):
             assert self.start_heading is None
             self.start_heading = data[0]/100
 
-        if not self.emergency_stop and self.last_heading:
-            if (self.time - self.last_heading_time) < datetime.timedelta(seconds=1):
-                direction_diff_deg = get_diff_angle(self.start_heading, self.last_heading)
-            else:
-                print("Lost IMU!")
-                direction_diff_deg = 0
-            self.go_safely(self.max_speed, direction_diff_deg, self.scan)
-
     def on_emergency_stop(self, data):
         self.emergency_stop = data
 
@@ -92,5 +80,10 @@ class GoStraight(Node):
         pass
 
     def on_scan(self, scan):
-        self.scan = scan
-
+        if not self.emergency_stop and self.last_heading:
+            if (self.time - self.last_heading_time) < datetime.timedelta(seconds=1):
+                direction_diff_deg = get_diff_angle(self.start_heading, self.last_heading)
+            else:
+                print("Lost IMU!")
+                direction_diff_deg = 0
+            self.go_safely(self.max_speed, direction_diff_deg, scan)
