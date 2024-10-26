@@ -111,6 +111,23 @@
         "driver": "app.scan360:Scan360",
         "init": {}
       },
+
+      "gps": {
+        "driver": "gps",
+        "in": ["raw"],
+        "out": ["position", "rel_position"],
+        "init": {}
+      },
+      "gps_serial": {
+        "driver": "serial",
+        "in": [],
+        "out": ["raw"],
+        "init": {
+          "port": "/dev/gps_ublox",
+          "speed": 115200
+        }
+      },
+
       "system": {
 	      "driver": "systemmonitor",
 	      "in": [],
@@ -133,7 +150,9 @@
               ["from_rc.desired_speed", "scan360.desired_speed"],
               ["kloubak.joint_angle", "scan360.joint_angle"],
               ["from_jetson_front.scan", "scan360.scan_front"],
-              ["from_jetson_rear.scan", "scan360.scan_rear"]
+              ["from_jetson_rear.scan", "scan360.scan_rear"],
+
+              ["gps_serial.raw", "gps.raw"]
     ]
   }
 }
