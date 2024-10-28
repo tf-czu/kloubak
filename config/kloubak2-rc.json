@@ -128,6 +128,18 @@
         }
       },
 
+      "realsense": {
+          "driver": "realsense",
+          "init": {
+            "device": "D400",
+            "depth_subsample": 6,
+            "depth_rgb": true,
+            "depth_resolution": [640, 360],
+            "rgb_resolution": [640, 360],
+            "depth_fps": 30
+          }
+      },
+
       "system": {
 	      "driver": "systemmonitor",
 	      "in": [],
@@ -137,6 +149,7 @@
 	      }
       }
     },
+
     "links": [["serial.raw", "can.slot_raw"],
               ["can.raw", "serial.slot_raw"],
               ["kloubak.can", "can.slot_can"],
