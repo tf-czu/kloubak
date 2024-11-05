@@ -29,7 +29,7 @@ def save_images(images, video_name):
 def save_csv(data, csv_filename):
     with open(csv_filename, "w", newline='') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=",")
-        csv_writer.writerow(["time", "lat", "lon"])
+        csv_writer.writerow(["micros", "latitude", "longitude"])
         for lat, lon, time_id in data:
              csv_writer.writerow([time_id, lat, lon])
 
@@ -68,7 +68,7 @@ def load_data(log_file, nmea_streamm, start, end):
             data = deserialize(data)
             if stream_id == only_nmea:
                 if nmea_streamm == "gps.position":
-                    lat_ms, lon_ms = data
+                    lon_ms, lat_ms = data
                     lat = lat_ms/3_600_000
                     lon = lon_ms/3_600_000
                 else:
@@ -116,9 +116,11 @@ if __name__ == "__main__":
     parser.add_argument('--nmea', help='nmea stream', default='gps.nmea_data')
     parser.add_argument('--start', help='start time', default=0, type=float)
     parser.add_argument('--end', help='end time', default=10_000, type=float)
+    parser.add_argument('--draw', help='Draw gps positions', action='store_true')
 
     args = parser.parse_args()
 
     pose_data, latlon, img_list, img_rs_list = load_data(args.logfile, args.nmea, args.start, args.end)
-    draw_pose(pose_data)
+    if args.draw:
+        draw_pose(pose_data)
     export_data(args.logfile, latlon, img_list, img_rs_list)
