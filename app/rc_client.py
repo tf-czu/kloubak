@@ -17,7 +17,7 @@ class RcClient:
         self.bus = bus
         self.bus.register("desired_speed")
         self.verbose = False
-        self.max_speed = 0.5
+        self.max_speed = 1.0
         self.max_angular_speed = 2
         import pygame
         global pygame
@@ -54,10 +54,10 @@ class RcClient:
                         speed = max(speed - 0.1, -max_speed)
 
                     elif event.key == pygame.K_LEFT:
-                        angle = min(angle + 10, 70)
+                        angle = min(angle + 5, 70)
 
                     elif event.key == pygame.K_RIGHT:
-                        angle = max(angle - 10, -70)
+                        angle = max(angle - 5, -70)
 
                     elif event.key == pygame.K_SPACE:
                         speed = 0
