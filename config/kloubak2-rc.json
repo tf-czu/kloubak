@@ -62,16 +62,17 @@
           "init": {"port": "/dev/lord-imu", "speed": 115200}
       },
       "localization": {
-	      "driver": "lsqr_localization:LeastSquaresLocalization",
-	      "in": ["orientation", "pose2d", "nmea"],
+	      "driver": "localization:Localization",
+	      "in": ["orientation", "encoders", "nmea"],
 	      "out": ["pose3d"],
 	      "init":{
             "window": 20,
             "prune": 20,
-            "post_window": 20,
-            "initial_angle": -75,
-            "initial_scale":  1.0,
-            "initial_window": 3.0
+            "post window": 20,
+            "initial angle": -75,
+            "initial scale":  1,
+            "initial window": 3.0,
+            "enc scale": 0.01
           }
       },
       "jetson_front": {
@@ -162,7 +163,7 @@
               ["kloubak.can", "can.slot_can"],
               ["can.can", "kloubak.slot_can"],
 
-              ["kloubak.pose2d", "localization.pose2d"],
+              ["kloubak.encoders", "localization.encoders"],
               ["from_rc.desired_speed", "kloubak.slot_desired_speed"],
               ["imu.orientation", "localization.orientation"],
               ["imu_serial.raw", "imu.raw"],
