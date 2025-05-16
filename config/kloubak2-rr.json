@@ -7,7 +7,8 @@
           "in": ["scan", "emergency_stop", "pose3d", "joint_angle"],
           "out": ["desired_speed"],
           "init": {
-            "max_speed": 0.5
+            "max_speed": 0.7,
+            "desired_heading": 163.209
           }
       },
       "kloubak": {
@@ -95,10 +96,18 @@
       },
 
       "localization": {
-	      "driver": "osgar.drivers.odoimuloc:Localization",
-	      "in": ["orientation", "odom"],
+	      "driver": "localization:Localization",
+	      "in": ["orientation", "encoders", "nmea"],
 	      "out": ["pose3d"],
-	      "init":{}
+	      "init":{
+            "window": 50,
+            "prune": 1,
+            "post window": 50,
+            "initial angle": 0,
+            "initial scale":  1,
+            "initial window": 3.0,
+            "enc scale": 0.01
+          }
       },
 
       "gps": {
@@ -129,18 +138,15 @@
     "links": [
               ["app.desired_speed", "kloubak.slot_desired_speed"],
               ["kloubak.emergency_stop", "app.emergency_stop"],
-              ["kloubak.joint_angle", "app.joint_angle"],
               ["lidar.scan", "app.scan"],
               ["localization.pose3d", "app.pose3d"],
-              ["gps.position", "app.position"],
-              ["imu.rotation", "app.rotation"],
 
               ["serial.raw", "can.slot_raw"],
               ["can.raw", "serial.slot_raw"],
               ["kloubak.can", "can.slot_can"],
               ["can.can", "kloubak.slot_can"],
 
-              ["kloubak.pose2d", "localization.odom"],
+              ["kloubak.encoders", "localization.encoders"],
               ["imu.orientation", "localization.orientation"],
               ["imu_serial.raw", "imu.raw"],
 
@@ -149,7 +155,8 @@
               ["lidar_back_tcp.raw", "lidar_back.raw"],
               ["lidar_back.raw", "lidar_back_tcp.raw"],
 
-              ["gps_serial.raw", "gps.raw"]
+              ["gps_serial.raw", "gps.raw"],
+              ["gps.nmea_data", "localization.nmea"]
     ]
   }
 }
