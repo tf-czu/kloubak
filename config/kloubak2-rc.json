@@ -62,10 +62,18 @@
           "init": {"port": "/dev/lord-imu", "speed": 115200}
       },
       "localization": {
-	      "driver": "osgar.drivers.odoimuloc:Localization",
-	      "in": ["orientation", "odom"],
+	      "driver": "localization:Localization",
+	      "in": ["orientation", "encoders", "nmea"],
 	      "out": ["pose3d"],
-	      "init":{}
+	      "init":{
+            "window": 20,
+            "prune": 20,
+            "post window": 20,
+            "initial angle": -75,
+            "initial scale":  1,
+            "initial window": 3.0,
+            "enc scale": 0.01
+          }
       },
       "jetson_front": {
         "driver": "app.run_jetson:RunJetson",
@@ -155,7 +163,7 @@
               ["kloubak.can", "can.slot_can"],
               ["can.can", "kloubak.slot_can"],
 
-              ["kloubak.pose2d", "localization.odom"],
+              ["kloubak.encoders", "localization.encoders"],
               ["from_rc.desired_speed", "kloubak.slot_desired_speed"],
               ["imu.orientation", "localization.orientation"],
               ["imu_serial.raw", "imu.raw"],
@@ -165,7 +173,8 @@
               ["from_jetson_front.scan", "scan360.scan_front"],
               ["from_jetson_rear.scan", "scan360.scan_rear"],
 
-              ["gps_serial.raw", "gps.raw"]
+              ["gps_serial.raw", "gps.raw"],
+              ["gps.nmea_data", "localization.nmea"]
     ]
   }
 }

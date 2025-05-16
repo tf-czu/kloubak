@@ -1,12 +1,12 @@
 """
   Go robot straight
 """
-import datetime
 import math
 
 import numpy as np
 
 from osgar.node import Node
+from osgar.lib.quaternion import heading
 from app.rc_client import angle_angular_speed
 
 
@@ -23,13 +23,13 @@ class GoStraight(Node):
         super().__init__(config, bus)
         bus.register('desired_speed')
         self.max_speed = config.get('max_speed', 0.5)
-        self.verbose = False
+        self.desired_heading = config['desired_heading']
+        print(f"Desired direction: {self.desired_heading}")
 
+        self.verbose = False
         self.pose = None
         self.emergency_stop = None
-        self.start_heading = None
-        self.last_heading = None
-        self.last_heading_time = None
+        self.scan = None
 
     @staticmethod
     def get_nearest_obstacle(scan):
@@ -61,29 +61,24 @@ class GoStraight(Node):
     def on_pose3d(self, data):
         (x, y, z), q = data
         self.pose = [x, y]
+        last_heading = math.degrees(heading(q))
+        if self.verbose:
+            print(f"last heading: {last_heading}")
 
-    def on_rotation(self, data):
-        if self.start_heading:
-            self.last_heading = data[0]/100
-            self.last_heading_time = self.time
-        else:
-            assert self.start_heading is None
-            self.start_heading = data[0]/100
+        if not self.emergency_stop:
+            direction_diff_deg = get_diff_angle(self.desired_heading, last_heading)
+            if self.verbose:
+                print(f"direction diff: {direction_diff_deg}")
+
+            # self.go_safely(self.max_speed, direction_diff_deg, scan)  # TODO fix lidar
+            angular_speed = angle_angular_speed(self.max_speed, direction_diff_deg)
+            self.send_speed_cmd(self.max_speed, angular_speed)
+
+
 
     def on_emergency_stop(self, data):
         self.emergency_stop = data
 
-    def on_joint_angle(self, data):
-        pass
-
-    def on_position(self, data):
-        pass
 
     def on_scan(self, scan):
-        if not self.emergency_stop and self.last_heading:
-            if (self.time - self.last_heading_time) < datetime.timedelta(seconds=1):
-                direction_diff_deg = get_diff_angle(self.start_heading, self.last_heading)
-            else:
-                print("Lost IMU!")
-                direction_diff_deg = 0
-            self.go_safely(self.max_speed, direction_diff_deg, scan)
+        self.scan = scan
